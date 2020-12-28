@@ -1005,9 +1005,7 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
                                                               userInfo:[strongSelf notificationUserInfo]];
             
             // Reset activity count
-            strongSelf.activityCount = 0;
-            strongSelf.imageView.image = nil;
-            strongSelf.infoImage = nil;
+            strongSelf.activityCount = 0; 
             __block void (^animationsBlock)(void) = ^{
                 // Shrink HUD a little to make a nice disappear animation
                 strongSelf.hudView.transform = CGAffineTransformScale(strongSelf.hudView.transform, 1/1.3f, 1/1.3f);
