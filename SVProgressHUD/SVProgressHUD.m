@@ -164,7 +164,14 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
 }
 
 + (void)setInfoImage:(UIImage*)image {
-    [self sharedView].infoImage = image;
+    if(image) {
+        [self sharedView].infoImage = image;
+    } else {
+        NSBundle *bundle = [NSBundle bundleForClass:[SVProgressHUD class]];
+        NSURL *url = [bundle URLForResource:@"SVProgressHUD" withExtension:@"bundle"];
+        NSBundle *imageBundle = [NSBundle bundleWithURL:url];
+        [self sharedView].infoImage = [UIImage imageWithContentsOfFile:[imageBundle pathForResource:@"info" ofType:@"png"]];
+    }
 }
 
 + (void)setSuccessImage:(UIImage*)image {
@@ -1031,6 +1038,7 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
                                                                         object:strongSelf
                                                                       userInfo:[strongSelf notificationUserInfo]];
                     
+                    strongSelf.imageView = nil;
                     // Tell the rootViewController to update the StatusBar appearance
 #if !defined(SV_APP_EXTENSIONS) && TARGET_OS_IOS
                     UIViewController *rootController = [[UIApplication sharedApplication] keyWindow].rootViewController;
