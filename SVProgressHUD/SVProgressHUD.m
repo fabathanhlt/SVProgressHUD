@@ -267,7 +267,7 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
 + (void)showInfoWithStatus:(NSString*)status {
     if ([self sharedView].infoImage) {
         [self showImage:[self sharedView].infoImage status:status];
-    } else { 
+    } else {
         [self showWithStatus:nil];
     }
     
@@ -1026,6 +1026,8 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
                     [strongSelf.hudView removeFromSuperview];
                     [strongSelf removeFromSuperview];
                     
+                    strongSelf.imageView.image = nil;
+                    strongSelf.infoImage = nil;
                     // Reset progress and cancel any running animation
                     strongSelf.progress = SVProgressHUDUndefinedProgress;
                     [strongSelf cancelRingLayerAnimation];
