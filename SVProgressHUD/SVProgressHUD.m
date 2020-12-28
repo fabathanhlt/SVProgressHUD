@@ -167,10 +167,7 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
     if(image) {
         [self sharedView].infoImage = image;
     } else {
-        NSBundle *bundle = [NSBundle bundleForClass:[SVProgressHUD class]];
-        NSURL *url = [bundle URLForResource:@"SVProgressHUD" withExtension:@"bundle"];
-        NSBundle *imageBundle = [NSBundle bundleWithURL:url];
-        [self sharedView].infoImage = [UIImage imageWithContentsOfFile:[imageBundle pathForResource:@"info" ofType:@"png"]];
+        [self sharedView].infoImage = nil;
     }
 }
 
@@ -268,7 +265,11 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
 #pragma mark - Show, then automatically dismiss methods
 
 + (void)showInfoWithStatus:(NSString*)status {
-    [self showImage:[self sharedView].infoImage status:status];
+    if ([self sharedView].infoImage) {
+        [self showImage:[self sharedView].infoImage status:status];
+    } else { 
+        [self showWithStatus:nil];
+    }
     
 #if TARGET_OS_IOS && __IPHONE_OS_VERSION_MAX_ALLOWED >= 100000
     if (@available(iOS 10.0, *)) {
@@ -874,7 +875,6 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
                 strongSelf.imageView.image = image;
             }
             strongSelf.imageView.hidden = NO;
-            
             // Update text
             strongSelf.statusLabel.hidden = status.length == 0;
             strongSelf.statusLabel.text = status;
@@ -1006,7 +1006,8 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
             
             // Reset activity count
             strongSelf.activityCount = 0;
-            
+            strongSelf.imageView.image = nil;
+            strongSelf.infoImage = nil;
             __block void (^animationsBlock)(void) = ^{
                 // Shrink HUD a little to make a nice disappear animation
                 strongSelf.hudView.transform = CGAffineTransformScale(strongSelf.hudView.transform, 1/1.3f, 1/1.3f);
@@ -1037,8 +1038,7 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
                     [[NSNotificationCenter defaultCenter] postNotificationName:SVProgressHUDDidDisappearNotification
                                                                         object:strongSelf
                                                                       userInfo:[strongSelf notificationUserInfo]];
-                    
-                    strongSelf.imageView = nil;
+                     
                     // Tell the rootViewController to update the StatusBar appearance
 #if !defined(SV_APP_EXTENSIONS) && TARGET_OS_IOS
                     UIViewController *rootController = [[UIApplication sharedApplication] keyWindow].rootViewController;
